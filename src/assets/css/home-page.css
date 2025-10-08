@@ -1,0 +1,18 @@
+@reference 'tailwindcss';
+
+.p-step-active .p-step-title {
+   color: var(--my-secondary-color) !important;
+}
+
+.p-step-number {
+   @apply bg-gray-200! text-gray-800 border-none!;
+}
+
+.p-step-active .p-step-number {
+   background-color: var(--my-secondary-color) !important;
+   color: white !important;
+}
+
+.p-step:has(~ .p-step-active) .p-stepper-separator {
+   background-color: var(--my-secondary-color) !important;
+}

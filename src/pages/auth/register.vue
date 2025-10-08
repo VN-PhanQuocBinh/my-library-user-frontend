@@ -16,13 +16,14 @@ const toast = useToast()
 const agreeTerms = ref(false)
 
 const initialValues: RegisterType = reactive({
-   fullname: '',
+   firstname: '',
+   lastname: '',
    password: '',
    email: '',
    dateOfBirth: new Date(),
    address: '',
    phoneNumber: '',
-   duty: 'staff',
+   gender: 'male',
 })
 
 const resolver = zodResolver(RegisterSchema)
@@ -46,16 +47,10 @@ const handleRegister = async (values: RegisterType) => {
 }
 
 const onFormSubmit = async (event: any) => {
-   if (event.valid && agreeTerms.value) {
-      // await handleRegister(event.values as RegisterType)
-      console.log(event.values)
+   console.log(event)
 
-      toast.add({
-         severity: 'success',
-         summary: 'Form is submitted.',
-         detail: 'This is a placeholder a ction.',
-         life: 3000,
-      })
+   if (event.valid && agreeTerms.value) {
+      await handleRegister(event.values as RegisterType)
    }
 }
 </script>
@@ -76,19 +71,35 @@ const onFormSubmit = async (event: any) => {
          @submit="onFormSubmit"
          class="flex flex-col gap-4 w-full sm:w-96"
       >
-         <!-- Fullname -->
-         <FormField class="flex flex-col gap-1">
-            <label for="fullname" class="text-gray-600">Fullname</label>
-            <InputText name="fullname" type="text" placeholder="Fullname" fluid />
-            <Message
-               v-if="$form.fullname?.invalid"
-               severity="error"
-               size="fullname"
-               variant="simple"
-            >
-               {{ $form.fullname.error?.message }}
-            </Message>
-         </FormField>
+         <div class="flex flex-row gap-3">
+            <!-- Firstname -->
+            <FormField class="flex flex-col gap-1">
+               <label for="firstname" class="text-gray-600">First name</label>
+               <InputText name="firstname" type="text" placeholder="First name" fluid />
+               <Message
+                  v-if="$form.firstname?.invalid"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+               >
+                  {{ $form.firstname.error?.message }}
+               </Message>
+            </FormField>
+
+            <!-- Lastname -->
+            <FormField class="flex flex-col gap-1">
+               <label for="lastname" class="text-gray-600">Last name</label>
+               <InputText name="lastname" type="text" placeholder="Last name" fluid />
+               <Message
+                  v-if="$form.lastname?.invalid"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+               >
+                  {{ $form.lastname.error?.message }}
+               </Message>
+            </FormField>
+         </div>
 
          <!-- Email -->
          <FormField class="flex flex-col gap-1">
@@ -96,15 +107,6 @@ const onFormSubmit = async (event: any) => {
             <InputText name="email" type="text" placeholder="Email" fluid />
             <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
                {{ $form.email.error?.message }}
-            </Message>
-         </FormField>
-
-         <!-- Address -->
-         <FormField class="flex flex-col gap-1">
-            <label for="address" class="text-gray-600">Address</label>
-            <InputText name="address" type="text" placeholder="Address" fluid />
-            <Message v-if="$form.address?.invalid" severity="error" size="small" variant="simple">
-               {{ $form.address.error?.message }}
             </Message>
          </FormField>
 
@@ -119,6 +121,15 @@ const onFormSubmit = async (event: any) => {
                variant="simple"
             >
                {{ $form.phoneNumber.error?.message }}
+            </Message>
+         </FormField>
+
+         <!-- Address -->
+         <FormField class="flex flex-col gap-1">
+            <label for="address" class="text-gray-600">Address</label>
+            <InputText name="address" type="text" placeholder="Address" fluid />
+            <Message v-if="$form.address?.invalid" severity="error" size="small" variant="simple">
+               {{ $form.address.error?.message }}
             </Message>
          </FormField>
 
@@ -144,22 +155,23 @@ const onFormSubmit = async (event: any) => {
                </Message>
             </FormField>
 
-            <!-- Role -->
+            <!-- Gender -->
             <FormField class="flex-1 flex flex-col gap-1">
-               <label for="duty" class="text-gray-600">Role</label>
+               <label for="gender" class="text-gray-600">Gender</label>
                <Select
-                  name="duty"
+                  name="gender"
                   :options="[
-                     { label: 'Staff', value: 'staff' },
-                     { label: 'Manager', value: 'manager' },
+                     { label: 'Male', value: 'male' },
+                     { label: 'Female', value: 'female' },
+                     { label: 'Other', value: 'other' },
                   ]"
-                  placeholder="Select Duty"
+                  placeholder="Select Gender"
                   optionLabel="label"
                   optionValue="value"
                   fluid
                />
-               <Message v-if="$form.duty?.invalid" severity="error" size="small" variant="simple">
-                  {{ $form.duty.error?.message }}
+               <Message v-if="$form.gender?.invalid" severity="error" size="small" variant="simple">
+                  {{ $form.gender.error?.message }}
                </Message>
             </FormField>
          </div>

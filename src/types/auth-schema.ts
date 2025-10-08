@@ -7,10 +7,11 @@ export const LoginSchema = z.object({
 })
 
 export const RegisterSchema = z.object({
-   fullname: z.string().min(1, 'Fullname is required'),
+   firstname: z.string().min(1, 'Firstname is required'),
+   lastname: z.string().min(1, 'Lastname is required'),
    email: z.string().email('Invalid email address'),
    password: z.string().min(6, 'Password must be at least 6 characters long'),
-   duty: z.enum(['staff', 'manager'], 'Duty must be either admin or staff'),
+   gender: z.enum(['male', 'female', 'other'], 'Gender must be either male, female or other'),
    dateOfBirth: z.date().refine((date) => date <= new Date(), {
       message: 'Date of birth must be in the past',
    }),

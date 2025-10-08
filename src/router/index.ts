@@ -1,4 +1,5 @@
 import DefaultLayout from '@/layouts/default-layout.vue'
+import { useAuthStore } from '@/stores/auth'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
@@ -21,6 +22,12 @@ const routes: Array<RouteRecordRaw> = [
       meta: { layout: DefaultLayout },
    },
    {
+      path: '/books',
+      name: 'books',
+      component: () => import('@/pages/books.vue'),
+      meta: { layout: DefaultLayout, requireAuth: true },
+   },
+   {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/pages/not-found.vue'),
@@ -31,6 +38,16 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
    history: createWebHistory(import.meta.env.BASE_URL),
    routes,
+})
+
+router.beforeEach((to, from, next) => {
+   const { isAuthenticated } = useAuthStore()
+
+    if (to.meta.requireAuth && !isAuthenticated) {
+      next({ name: 'login' })
+   } else {
+      next()
+   }
 })
 
 export default router

@@ -42,13 +42,6 @@ const onFormSubmit = async (event: any) => {
    if (event.valid) {
       await handleLogin(event.values as LoginType)
       console.log(event.values as LoginType)
-
-      toast.add({
-         severity: 'success',
-         summary: 'Form is submitted.',
-         detail: 'This is a placeholder a ction.',
-         life: 3000,
-      })
    }
 }
 </script>
