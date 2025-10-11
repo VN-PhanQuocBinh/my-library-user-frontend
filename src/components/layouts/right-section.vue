@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Popover, InputText } from 'primevue'
-import { useDebounce } from '@/utils/use-debounce'
 
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
@@ -25,15 +24,15 @@ const searchDialogOpen = ref(false)
    <div v-if="isAuthenticated" class="flex flex-row items-center gap-6">
       <button
          @click="searchDialogOpen = true"
-         class="flex flex-row items-center px-4 rounded-full bg-gray-100 border focus-within:border-(--my-primary-color) transition cursor-pointer"
+         class="flex flex-row items-center px-4 rounded-full bg-gray-100 border transition cursor-pointer"
       >
          <i class="pi pi-search text-gray-400" :style="{ fontSize: '1rem' }" />
-         <div placeholder="Search" unstyled class="outline-none text-gray-400 px-3 py-2 min-w-40">
+         <div placeholder="Search" unstyled class="text-left outline-none text-gray-400 px-3 py-2 min-w-40">
             Search books
          </div>
       </button>
-      <SearchDialog v-model:open="searchDialogOpen"  />
 
+      <SearchDialog :open="searchDialogOpen" @update:open="searchDialogOpen = $event" />
 
       <router-link to="/borrows">
          <button

@@ -28,6 +28,12 @@ const routes: Array<RouteRecordRaw> = [
       meta: { layout: DefaultLayout, requireAuth: true },
    },
    {
+      path: '/books/:id',
+      name: 'book-detail',
+      component: () => import('@/pages/book-detail.vue'),
+      meta: { layout: DefaultLayout, requireAuth: true },
+   },
+   {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/pages/not-found.vue'),
@@ -43,7 +49,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
    const { isAuthenticated } = useAuthStore()
 
-    if (to.meta.requireAuth && !isAuthenticated) {
+   if (to.meta.requireAuth && !isAuthenticated) {
       next({ name: 'login' })
    } else {
       next()
