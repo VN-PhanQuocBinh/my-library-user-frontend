@@ -11,7 +11,7 @@ import BorrowSteps from '@/components/pages/home/borrow-steps.vue'
    <div class="text-gray-800">
       <HeroSection />
       <GenreSection />
-      <FeaturedBooks />
+      <!-- <FeaturedBooks /> -->
       <BorrowSteps />
    </div>
 </template>

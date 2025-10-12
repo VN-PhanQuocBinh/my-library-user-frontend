@@ -122,7 +122,6 @@ onMounted(() => {
                   <strong>Published Date:</strong>
                   {{ new Date(book.publishedDate).toLocaleDateString() }}
                </p>
-               <p><strong>Quantity:</strong> {{ book.quantity }}</p>
                <p class="mt-2"><strong>Description:</strong></p>
                <p class="mt-1">{{ book.description }}</p>
             </div>

@@ -4,6 +4,17 @@ import type { Book, Borrowing } from '@/types/book'
 defineProps<{
    borrow: Borrowing
 }>()
+
+
+const statusColor: Record<string, { bg: string; text: string }> = {
+   pending: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
+   approved: { bg: 'bg-blue-100', text: 'text-blue-800' },
+   rejected: { bg: 'bg-gray-100', text: 'text-gray-800' },
+   returned: { bg: 'bg-green-100', text: 'text-green-800' },
+   overdue: { bg: 'bg-red-100', text: 'text-red-800' },
+   lost: { bg: 'bg-gray-100', text: 'text-gray-800' },
+}
+
 </script>
 
 <template>
@@ -11,7 +22,7 @@ defineProps<{
       class="relative flex flex-row gap-6 bg-white shadow-md rounded-sm p-4 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200"
    >
       <div
-         class="absolute right-0 top-0 px-2 py-1 text-white bg-yellow-700 font-semibold rounded-bl-xl text-center text-xs w-max"
+         :class="`absolute right-0 top-0 px-2 pb-1.5 py-1 ${statusColor[borrow.status].text} ${statusColor[borrow.status].bg} font-semibold rounded-bl-xl text-center text-xs w-max capitalize`"
       >
          {{ borrow.status }}
       </div>
