@@ -1,5 +1,6 @@
 import type { Book } from '@/types/book'
 import apiClient from './api.service'
+import { ca } from 'zod/locales'
 
 type GetBooksParams = {
    query?: string
@@ -30,11 +31,22 @@ export const getBookById = async (id: string): Promise<Book> => {
    }
 }
 
-export const borrowBook = async (userId: string, bookId: string) => {
+export const borrowBook = async (bookId: string) => {
    try {
-      const response = await apiClient.post('/book/borrow', { userId, bookId })
+      const response = await apiClient.post('/book/register-borrow', { bookId })
       return response.data
    } catch (error) {
       throw error
    }
 }
+
+export const getMyBorrowings = async () => {
+   try {
+      const response = await apiClient.get('/book/my-borrowings')
+      return response.data
+   } catch (error) {
+      throw error
+   }
+}
+
+// export const getBorrows 

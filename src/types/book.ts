@@ -62,3 +62,13 @@ export interface Book {
    detailedImages: ImageInfo[]
    slug: string
 }
+
+export interface Borrowing {
+   _id: string
+   userId: string
+   bookId: Book
+   status: 'pending' | 'approved' | 'rejected' | 'returned'
+   maxBorrowDays?: number
+   borrowedAt?: Date
+   returnedAt?: Date | null
+}

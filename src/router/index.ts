@@ -34,6 +34,12 @@ const routes: Array<RouteRecordRaw> = [
       meta: { layout: DefaultLayout, requireAuth: true },
    },
    {
+      path: '/borrows',
+      name: 'borrows',
+      component: () => import('@/pages/borrows.vue'),
+      meta: { layout: DefaultLayout, requireAuth: true },
+   },
+   {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/pages/not-found.vue'),

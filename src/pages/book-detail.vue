@@ -8,13 +8,11 @@ import Dialog from 'primevue/dialog'
 
 import type { Book } from '@/types/book'
 import { getBookById, borrowBook } from '@/services/book.service'
-import { useAuthStore } from '@/stores/auth'
 
 import Galleria from 'primevue/galleria'
 
 import Image from 'primevue/image'
 
-const authStore = useAuthStore()
 const route = useRoute()
 const book = ref<Book | null>(null)
 const loading = ref(true)
@@ -41,10 +39,8 @@ const fetchBookDetail = async () => {
 const handleBorrow = async () => {
    try {
       borrowing.value = true
-
-      const userId = authStore.user?._id
       const bookId = book.value?._id
-      if (!userId || !bookId) {
+      if (!bookId) {
          toast.add({
             severity: 'error',
             summary: 'Error',
@@ -54,7 +50,7 @@ const handleBorrow = async () => {
          return
       }
 
-      await borrowBook(userId, bookId)
+      await borrowBook(bookId)
       dialogVisible.value = false
       toast.add({
          severity: 'success',
