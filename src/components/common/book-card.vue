@@ -15,7 +15,7 @@ defineProps<{ book: Book }>()
             class="w-full object-cover rounded aspect-[3/5] group-hover:scale-105 transition-transform duration-400"
          />
       </div>
-      <div>
+      <div class="flex-1">
          <div class="text-xs text-red-600 px-2 py-1 bg-red-100 rounded-full w-max font-semibold">
             {{ book.genre }}
          </div>

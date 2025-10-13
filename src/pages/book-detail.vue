@@ -98,10 +98,10 @@ onMounted(() => {
             <Galleria
                :value="[book.coverImage.url, ...book.detailedImages.map((img) => img.url)]"
                :numVisible="4"
-               containerStyle="max-width: 250px"
+               containerClass="w-[400px] aspect-[3/5]"
             >
                <template #item="slotProps">
-                  <Image :src="slotProps.item" style="width: 100%" />
+                  <Image :src="slotProps.item" class="h-full" />
                </template>
                <template #thumbnail="slotProps">
                   <img :src="slotProps.item" class="max-h-14!" />
@@ -137,7 +137,7 @@ onMounted(() => {
                <Button
                   label="Borrow"
                   icon="pi pi-book"
-                  class="bg-(--my-secondary-color)! hover:opacity-80"
+                  class="bg-(--my-secondary-color)! hover:opacity-80 border-none!"
                   :disabled="!book.status || book.quantity === 0"
                   @click="dialogVisible = true"
                />
@@ -157,7 +157,7 @@ onMounted(() => {
                <Button
                   label="Confirm"
                   icon="pi pi-check"
-                  class="bg-(--my-secondary-color)! hover:opacity-80"
+                  class="bg-(--my-secondary-color)! hover:opacity-80 border-none!"
                   @click="
                      () => {
                         handleBorrow()
