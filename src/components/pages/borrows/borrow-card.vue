@@ -16,7 +16,11 @@ const statusColor: Record<string, { bg: string; text: string }> = {
 }
 
 const deadline = computed(() => {
-   const borrowedAt = new Date(props.borrow.borrowedAt || '')
+   if (!props.borrow.borrowedAt) {
+      return new Date() // Return current date if borrowedAt is not set
+   }
+
+   const borrowedAt = new Date(props.borrow.borrowedAt)
    if (isNaN(borrowedAt.getTime())) {
       return new Date() // Return current date if borrowedAt is invalid
    }
@@ -61,7 +65,9 @@ console.log('daysToDeadlineByPercent', daysToDeadlineByPercent.value)
                <div class="flex-1 flex flex-col">
                   <span class="text-xs text-gray-400">Ngày mượn</span>
                   <span class="font-semibold text-sm">{{
-                     new Date(borrow.borrowedAt as Date).toLocaleDateString()
+                     borrow.borrowedAt
+                        ? new Date(borrow.borrowedAt).toLocaleDateString()
+                        : 'Chưa duyệt'
                   }}</span>
                </div>
                <div class="flex-1 flex flex-col">
@@ -73,15 +79,22 @@ console.log('daysToDeadlineByPercent', daysToDeadlineByPercent.value)
                   }}</span>
                </div>
             </div>
-            <div class="flex justify-end flex-col col-span-2">
+
+            <div v-if="!['returned', 'pending'].includes(borrow.status)" class="flex justify-end flex-col col-span-2">
                <span class="text-xs mb-1 text-(--my-secondary-color) font-semibold">Hạn trả</span>
-               <div class="relative h-5 w-full bg-slate-50 rounded-sm">
+               <div class="relative h-5 w-full bg-slate-100 rounded-sm">
                   <span
-                     class="z-20 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 absolute font-semibold text-(--my-secondary-color)"
+                     :class="[
+                        'z-20 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 absolute font-semibold text-(--my-secondary-color)',
+                        { 'text-red-600': daysToDeadlineByPercent === 100 },
+                     ]"
                      >{{ deadline.toLocaleDateString() }}</span
                   >
                   <div
-                     class="z-10 absolute left-0 top-0 h-full bg-slate-200"
+                     :class="[
+                        'z-10 absolute left-0 top-0 h-full bg-slate-200',
+                        { 'bg-rose-100!': daysToDeadlineByPercent === 100 },
+                     ]"
                      :style="{ width: `${Math.max(0, Math.min(100, daysToDeadlineByPercent))}%` }"
                   ></div>
                </div>

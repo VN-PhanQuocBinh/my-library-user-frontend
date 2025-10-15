@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import BookCard from '@/components/common/book-card.vue'
+import { getBooks } from '@/services/book.service'
+import type { Book } from '@/types/book'
+import { onMounted, ref } from 'vue'
+
+const books = ref<Book[]>([])
+
+onMounted(async () => {
+   const response = await getBooks()
+   books.value = response.data.list.slice(0, 5) // Lấy 5 cuốn sách đầu tiên
+})
 </script>
 
 <template>
@@ -18,7 +28,7 @@ import BookCard from '@/components/common/book-card.vue'
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
          <!-- Example Book Card -->
-         <BookCard v-for="n in 5" :key="n" />
+         <BookCard v-for="book in books" :key="book._id" :book="book" />
       </div>
    </section>
 </template>

@@ -27,7 +27,11 @@ const searchDialogOpen = ref(false)
          class="flex flex-row items-center px-4 rounded-full bg-gray-100 border transition cursor-pointer"
       >
          <i class="pi pi-search text-gray-400" :style="{ fontSize: '1rem' }" />
-         <div placeholder="Search" unstyled class="text-left outline-none text-gray-400 px-3 py-2 min-w-40">
+         <div
+            placeholder="Search"
+            unstyled
+            class="text-left outline-none text-gray-400 px-3 py-2 min-w-40"
+         >
             Search books
          </div>
       </button>

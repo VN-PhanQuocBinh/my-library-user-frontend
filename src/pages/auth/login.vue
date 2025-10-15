@@ -8,10 +8,12 @@ import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { LoginSchema, type LoginType } from '@/types/auth-schema'
 
 import { useAuthStore } from '@/stores/auth'
+import { ref } from 'vue'
 
 // login code
 const { loginUser } = useAuthStore()
 const toast = useToast()
+const errorMessage = ref('')
 
 const initialValues = reactive({
    email: '',
@@ -28,11 +30,15 @@ const handleLogin = async (values: LoginType) => {
          summary: 'Login successful',
          life: 3000,
       })
-   } catch (error: unknown) {
+
+      errorMessage.value = ''
+   } catch (error: any) {
+      console.log('Login error:', error)
+      errorMessage.value = error?.response?.data?.message || 'An error occurred during login.'
       toast.add({
          severity: 'error',
          summary: 'Login failed',
-         detail: 'An error occurred during login.',
+         detail: error?.response?.data?.message || 'An error occurred during login.',
          life: 3000,
       })
    }
@@ -47,12 +53,19 @@ const onFormSubmit = async (event: any) => {
 </script>
 
 <template>
-   <div class="flex flex-col items-center gap-2 w-full">
+   <div class="flex flex-col items-center gap-2 w-full py-4">
       <Toast position="bottom-right" class="items-center!" />
 
       <div class="flex flex-col items-center gap-1">
          <h1 class="text-3xl font-bold text-green-500">LOGIN</h1>
          <p class="text-gray-500">Login to your account</p>
+      </div>
+
+      <div
+         v-show="errorMessage !== ''"
+         class="text-red-500 text-base font-semibold w-full sm:w-80 px-3 py-1 rounded-sm bg-red-100"
+      >
+         <span>{{ errorMessage }}</span>
       </div>
 
       <Form
@@ -87,7 +100,9 @@ const onFormSubmit = async (event: any) => {
             </Message>
          </FormField>
 
-         <router-link to="/forgot-password" class="self-end text-green-500 underline text-sm"
+         <router-link
+            to="/forgot-password"
+            class="self-end text-(--my-secondary-color)! underline text-sm"
             >Forgot password?</router-link
          >
 
