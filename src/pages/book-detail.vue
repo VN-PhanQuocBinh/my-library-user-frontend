@@ -117,17 +117,17 @@ onMounted(() => {
                by <span class="font-semibold">{{ book.author }}</span>
             </p>
             <div class="text-gray-700">
-               <p><strong>Publisher:</strong> {{ book.publisher.name }}</p>
+               <p><strong>Nhà xuất bản:</strong> {{ book.publisher.name }}</p>
                <p>
-                  <strong>Published Date:</strong>
+                  <strong>Ngày xuất bản:</strong>
                   {{ new Date(book.publishedDate).toLocaleDateString() }}
                </p>
-               <p class="mt-2"><strong>Description:</strong></p>
+               <p class="mt-2"><strong>Mô tả:</strong></p>
                <p class="mt-1">{{ book.description }}</p>
             </div>
             <div class="flex flex-row items-center gap-4">
                <div class="px-3 py-2 rounded-sm bg-blue-50 text-blue-900 font-semibold h-full">
-                  {{ book.quantity }} Remaining
+                  {{ book.quantity }} Còn lại
                </div>
                <div
                   class="size-9 text-gray-500 hover:text-white hover:bg-red-500 hover:border-none border border-gray-500 rounded-[6px] grid place-items-center transition-all"
@@ -135,29 +135,29 @@ onMounted(() => {
                   <i class="pi pi-heart" title="Book status"></i>
                </div>
                <Button
-                  label="Borrow"
+                  label="Mượn sách"
                   icon="pi pi-book"
-                  class="bg-(--my-secondary-color)! hover:opacity-80 border-none!"
+                  class="bg-(--my-secondary-color)! text-white! hover:opacity-80 border-none!"
                   :disabled="!book.status || book.quantity === 0"
                   @click="dialogVisible = true"
                />
             </div>
          </div>
 
-         <Dialog header="Borrow Book" v-model:visible="dialogVisible" modal>
-            <p>Are you sure you want to borrow this book?</p>
+         <Dialog header="Mượn sách" v-model:visible="dialogVisible" modal>
+            <p>Bạn có chắc chắn muốn mượn cuốn sách này không?</p>
             <div class="flex justify-end gap-3 mt-4">
                <Button
-                  label="Cancel"
+                  label="Hủy"
                   icon="pi pi-times"
                   severity="secondary"
-                  class="p-button-text"
+                  class="p-button-text "
                   @click="dialogVisible = false"
                />
                <Button
-                  label="Confirm"
+                  label="Xác nhận"
                   icon="pi pi-check"
-                  class="bg-(--my-secondary-color)! hover:opacity-80 border-none!"
+                  class="bg-(--my-secondary-color)! hover:opacity-80 border-none! text-white!"
                   @click="
                      () => {
                         handleBorrow()

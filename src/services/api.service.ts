@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance } from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
 const apiClient: AxiosInstance = axios.create({
    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
@@ -29,9 +30,17 @@ apiClient.interceptors.response.use(
    (error) => {
       const { status } = error.response
 
-      if (status === 401) {
-         // Handle unauthorized access, e.g., redirect to login
-         console.error('Unauthorized access - perhaps redirect to login?')
+      switch (status) {
+         case 401: {
+            console.error('Unauthorized access - perhaps redirect to login?')
+         }
+         case 403: {
+            const authStore = useAuthStore()
+            authStore.logout()
+            break
+         }
+         default:
+            console.error('API error:', error.response.data)
       }
       return Promise.reject(error)
    },

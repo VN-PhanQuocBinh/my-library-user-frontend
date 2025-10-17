@@ -15,20 +15,20 @@ import StepPanel from 'primevue/steppanel'
    <section class="py-16 px-4 text-center">
       <div>
          <h2 class="text-3xl md:text-4xl font-bold mb-4 text-(--my-secondary-color)">
-            Borrowing Made Easy.
-            <span class="text-yellow-400">Just 3 Simple Steps!</span>
+            Mượn sách dễ dàng
+            <span class="text-yellow-400">Chỉ 3 bước đơn giản!</span>
          </h2>
          <p class="text-gray-600 mt-4">
-            Get the books you need delivered fast. Here’s how to start your borrowing journey today.
+            Nhận sách bạn cần một cách nhanh chóng. Đây là cách bắt đầu hành trình mượn sách của bạn hôm nay.
          </p>
       </div>
       <div class="mt-12">
          <div class="card flex justify-center">
             <Stepper value="1" class="basis-[50rem]">
                <StepList>
-                  <Step value="1">Search Your Title</Step>
-                  <Step value="2">Wait For Staff</Step>
-                  <Step value="3">Pick Up Your Book</Step>
+                  <Step value="1">Tìm kiếm tiêu đề của bạn</Step>
+                  <Step value="2">Chờ nhân viên</Step>
+                  <Step value="3">Nhận sách của bạn</Step>
                </StepList>
                <StepPanels>
                   <StepPanel v-slot="{ activateCallback }" value="1">
@@ -94,3 +94,11 @@ import StepPanel from 'primevue/steppanel'
       </div>
    </section>
 </template>
+
+
+<style scoped>
+   :deep(.p-button) {
+      display: none !important;
+      @apply bg-(--my-primary-color) text-(--my-secondary-color) hover:bg-(--my-secondary-color)! hover:text-(--my-primary-color)! border-none!;
+   }
+</style>

@@ -16,3 +16,5 @@
 .p-step:has(~ .p-step-active) .p-stepper-separator {
    background-color: var(--my-secondary-color) !important;
 }
+
+

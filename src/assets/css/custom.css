@@ -1,0 +1,6 @@
+@reference 'tailwindcss';
+
+.p-select:not(.p-disabled).p-focus,
+.p-inputtext:enabled:focus {
+   @apply border-gray-800!;
+}

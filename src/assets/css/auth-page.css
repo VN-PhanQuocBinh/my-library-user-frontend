@@ -1,0 +1,5 @@
+@reference 'tailwindcss';
+
+.p-button {
+   @apply bg-(--my-primary-color)! text-(--my-secondary-color)! border-none! hover:bg-(--my-primary-color)/80!;
+}

@@ -9,6 +9,7 @@ import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import defaultLayout from './layouts/default-layout.vue'
 import { useAuthStore } from './stores/auth'
+import "@/assets/css/custom.css"
 
 const authStore = useAuthStore()
 const route = useRoute()
