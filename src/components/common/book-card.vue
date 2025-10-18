@@ -27,7 +27,7 @@ const { _id, coverImage, genre, name, author, quantity } = toRefs(props.book)
 
       <div class="flex items-center gap-3">
          <button
-            v-tooltip.top="`Còn ${ quantity } quyển`"
+            v-tooltip.top="`Còn ${quantity} quyển`"
             class="size-9 text-gray-600 bg-blue-50 rounded-[6px]"
          >
             {{ quantity }}
@@ -37,12 +37,12 @@ const { _id, coverImage, genre, name, author, quantity } = toRefs(props.book)
          >
             <i class="pi pi-heart"></i>
          </button>
-         <router-link
+         <RouterLink
             :to="`/books/${_id}`"
-            class="flex-1 bg-(--my-secondary-color) text-white px-4 h-9 rounded transition"
+            class="flex-1 bg-(--my-secondary-color) hover:bg-(--my-secondary-color)/80 text-white px-4 h-9 rounded transition"
          >
-            <button class="text-white w-full h-full">Xem chi tiết</button>
-         </router-link>
+            <button class="text-white w-full h-full line-clamp-1">Xem chi tiết</button>
+         </RouterLink>
       </div>
    </div>
 </template>

@@ -58,12 +58,12 @@ const handleBorrow = async () => {
          detail: 'Book borrowed successfully',
          life: 3000,
       })
-   } catch (error) {
+   } catch (error: any) {
       console.error('Error borrowing book:', error)
       toast.add({
          severity: 'error',
          summary: 'Error',
-         detail: 'Failed to borrow book',
+         detail: error?.response?.data?.message || 'Failed to borrow book',
          life: 3000,
       })
    } finally {
@@ -100,8 +100,8 @@ onMounted(() => {
                :numVisible="4"
                containerClass="w-[400px] aspect-[3/5]"
             >
-               <template #item="slotProps">
-                  <Image :src="slotProps.item" class="h-full" />
+               <template #item="slotProps" >
+                  <img :src="slotProps.item" class="h-[550px]! object-cover" />
                </template>
                <template #thumbnail="slotProps">
                   <img :src="slotProps.item" class="max-h-14!" />
@@ -113,10 +113,9 @@ onMounted(() => {
          <div class="lg:col-span-2 space-y-6">
             <Tag :value="book.genre" severity="info" class="text-sm rounded-full! capitalize" />
             <h1 class="text-5xl font-semibold text-gray-700">{{ book.name }}</h1>
-            <p class="text-gray-600">
-               by <span class="font-semibold">{{ book.author }}</span>
-            </p>
-            <div class="text-gray-700">
+
+            <div class="text-gray-700 mt-4">
+               <p><strong>Tác giả:</strong> {{ book.author }}</p>
                <p><strong>Nhà xuất bản:</strong> {{ book.publisher.name }}</p>
                <p>
                   <strong>Ngày xuất bản:</strong>
@@ -151,7 +150,7 @@ onMounted(() => {
                   label="Hủy"
                   icon="pi pi-times"
                   severity="secondary"
-                  class="p-button-text "
+                  class="p-button-text"
                   @click="dialogVisible = false"
                />
                <Button
@@ -193,5 +192,9 @@ onMounted(() => {
 :deep(.p-button:disabled) {
    opacity: 0.5;
    cursor: not-allowed;
+}
+
+:deep(.p-galleria-items) {
+   height: 550px;
 }
 </style>

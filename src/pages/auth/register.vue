@@ -57,7 +57,7 @@ const onFormSubmit = async (event: any) => {
 </script>
 
 <template>
-   <div class="w-full flex justify-center bg-slate-100 min-h-screen p-10">
+   <div class="w-full flex justify-center bg-slate-50 min-h-screen p-10">
       <div class="flex flex-col items-center gap-2 w-max bg-white p-10 shadow-md rounded-xl">
          <Toast position="bottom-right" class="items-center!" />
 

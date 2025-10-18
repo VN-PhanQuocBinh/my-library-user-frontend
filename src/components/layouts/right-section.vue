@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 
 import SearchDialog from '../common/search-dialog.vue'
+import ProfilePopover from '../common/profile-popover.vue'
 
 const authStore = useAuthStore()
 const { user, isAuthenticated } = storeToRefs(authStore)
@@ -52,26 +53,8 @@ const searchDialogOpen = ref(false)
          <i class="pi pi-user" :style="{ fontSize: '1.5rem' }"></i>
       </button>
 
-      <Popover ref="openProfilePopover" class="w-64 p-4 shadow-lg">
-         <div class="flex flex-col gap-2">
-            <div class="flex flex-col items-center gap-1 mb-2">
-               <div
-                  class="font-semibold text-2xl text-gray-800 size-14 bg-(--my-primary-color) rounded-full grid place-items-center"
-               >
-                  {{ user?.firstname.charAt(0) }}
-               </div>
-               <div class="text-gray-800 font-semibold">
-                  {{ user?.lastname + ' ' + user?.firstname }}
-               </div>
-               <div class="text-sm text-gray-600">{{ user?.email }}</div>
-            </div>
-            <button
-               @click="logout"
-               class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-full transition"
-            >
-               Logout
-            </button>
-         </div>
+      <Popover ref="openProfilePopover" class="w-64 p-2 shadow-lg">
+         <ProfilePopover />
       </Popover>
    </div>
 

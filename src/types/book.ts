@@ -67,7 +67,7 @@ export interface Borrowing {
    _id: string
    userId: string
    bookId: Book
-   status: 'pending' | 'approved' | 'rejected' | 'returned'
+   status: 'pending' | 'approved' | 'rejected' | 'returned' | 'overdue' | 'lost'
    maxBorrowDays?: number
    borrowedAt?: Date
    returnedAt?: Date | null

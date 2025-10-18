@@ -4,6 +4,7 @@ import { InputText } from 'primevue'
 import { useDebounce } from '@/utils/use-debounce'
 import type { Book } from '@/types/book'
 import { getBooks } from '@/services/book.service'
+import { normalizeVietnamese } from '@/utils/normalize-vietnamese'
 
 const props = defineProps({ open: Boolean })
 const emit = defineEmits(['update:open'])
@@ -21,7 +22,7 @@ watch(debouncedSearchValue, async () => {
    const newSearchValue = debouncedSearchValue.value.trim()
    try {
       if (newSearchValue.length > 0) {
-         const books = await getBooks({ query: newSearchValue })
+         const books = await getBooks({ query: normalizeVietnamese(newSearchValue) })
          searchResults.value = books.data.list
       } else {
          searchResults.value = []
@@ -59,7 +60,6 @@ const closeDialog = () => {
       emit('update:open', false)
    }, 200)
 }
-
 </script>
 
 <template>
@@ -87,15 +87,18 @@ const closeDialog = () => {
             />
          </div>
 
-         <div class="flex-1 overflow-y-auto max-h-96">
-            <div v-if="!searchValue" class="text-center text-gray-500 py-8">
-               Start typing to search for books...
-            </div>
-            <div
-               v-else-if="debouncedSearchValue && searchResults.length === 0"
-               class="text-gray-500"
+         <div v-if="debouncedSearchValue.value !== ''" class="text-gray-500 px-3 py-2">
+            <span v-if="debouncedSearchValue && searchResults.length === 0"
+               >Không tìm thấy kết quả cho "{{ debouncedSearchValue }}"</span
             >
-               No results found for "{{ debouncedSearchValue }}"
+            <span v-else-if="debouncedSearchValue"
+               >Kết quả tìm kiếm cho "{{ debouncedSearchValue }}"</span
+            >
+         </div>
+
+         <div class="flex-1 overflow-y-auto max-h-96 custom-scrollbar">
+            <div v-if="!searchValue" class="text-center text-gray-500 py-8">
+               Tìm kiếm sách theo tên, tác giả hoặc nhà xuất bản
             </div>
             <ul v-else class="space-y-2">
                <li

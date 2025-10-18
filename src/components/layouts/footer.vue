@@ -2,7 +2,7 @@
 import IconSvg from '../common/IconSvg.vue'
 </script>
 <template>
-   <footer class="bg-gray-800 text-white py-12 px-6">
+   <footer class="bg-(--my-secondary-color) text-white py-12 px-6">
       <div class="max-w-6xl mx-auto">
          <!-- Main Footer Content -->
          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

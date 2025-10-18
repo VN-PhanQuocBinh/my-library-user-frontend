@@ -13,12 +13,14 @@
                <span>Khám phá hàng ngàn tựa sách từ mọi lĩnh vực: </span>
                <span>Sách mới, Sách bán chạy và Những tác phẩm kinh điển.</span>
             </p>
-            <button
-               class="group border border-(--my-primary-color) text-white hover:bg-(--my-primary-color) hover:text-(--my-secondary-color) font-semibold px-6 py-3 rounded-full transition flex flex-row items-center gap-2"
-            >
-               Xem toàn bộ sách
-               <i class="pi pi-arrow-right group-hover:translate-x-1 transition-transform"></i>
-            </button>
+            <routerLink to="/books">
+               <button
+                  class="group border border-(--my-primary-color) text-white hover:bg-(--my-primary-color) hover:text-(--my-secondary-color) font-semibold px-6 py-3 rounded-full transition flex flex-row items-center gap-2"
+               >
+                  Xem toàn bộ sách
+                  <i class="pi pi-arrow-right group-hover:translate-x-1 transition-transform"></i>
+               </button>
+            </routerLink>
          </div>
 
          <!-- Stats -->
