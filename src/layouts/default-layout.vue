@@ -8,7 +8,7 @@ import Footer from '@/components/layouts/footer.vue'
       <Header />
 
       <main :class="['flex-grow flex flex-col mx-auto w-full mt-16 custome-scrollbar overflow-y-scroll']">
-         <div class="flex-1 mb-10">
+         <div class="flex-1 pb-10 bg-slate-50">
             <slot />
          </div>
          <Footer />

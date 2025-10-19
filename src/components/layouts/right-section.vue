@@ -33,7 +33,7 @@ const searchDialogOpen = ref(false)
             unstyled
             class="text-left outline-none text-gray-400 px-3 py-2 min-w-40"
          >
-            Search books
+            Tìm kiếm sách...
          </div>
       </button>
 
@@ -54,24 +54,24 @@ const searchDialogOpen = ref(false)
       </button>
 
       <Popover ref="openProfilePopover" class="w-64 p-2 shadow-lg">
-         <ProfilePopover />
+         <ProfilePopover :onToggleProfilePopover="toggleProfilePopover" />
       </Popover>
    </div>
 
    <div v-else class="flex flex-row gap-2">
       <router-link to="/login">
          <button
-            class="bg-(--my-primary-color) text-gray-800 font-semibold py-2 min-w-24 rounded-full hover:bg-amber-400 transition"
+            class="bg-(--my-primary-color) text-gray-800 font-semibold py-2 px-4 min-w-24 rounded-full hover:bg-amber-400 transition"
          >
-            Login
+            Đăng nhập
          </button>
       </router-link>
 
       <router-link to="/register">
          <button
-            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 min-w-24 rounded-full transition"
+            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 min-w-24 rounded-full transition"
          >
-            Sign up
+            Đăng ký
          </button>
       </router-link>
    </div>

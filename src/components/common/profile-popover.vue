@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { toRefs, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { formatCurrency } from '@/utils/format-currency'
+
+const props = defineProps<{ onToggleProfilePopover: (event: MouseEvent) => void }>()
 
 const authStore = useAuthStore()
 const { user, logout } = toRefs(authStore)
@@ -8,10 +11,7 @@ const { user, logout } = toRefs(authStore)
 const formattedTotalDebt = computed(() => {
    if (!user.value?.totalDebt) return '0 đ'
 
-   return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-   }).format(user.value.totalDebt)
+   return formatCurrency(user.value.totalDebt)
 })
 </script>
 
@@ -30,9 +30,18 @@ const formattedTotalDebt = computed(() => {
       </div>
 
       <div>
-         <div class="text-gray-500">Số tiền nợ: </div>
+         <div class="text-gray-500">Số tiền nợ:</div>
          <div class="font-semibold text-gray-800 text-lg">{{ formattedTotalDebt }}</div>
       </div>
+
+      <button @click="props.onToggleProfilePopover" class="w-full">
+         <router-link
+            to="/profile"
+            class="w-full bg-(--my-primary-color) hover:bg-amber-400 text-gray-800 font-semibold py-2 rounded-full transition block text-center"
+         >
+            Hồ sơ của tôi
+         </router-link>
+      </button>
 
       <button
          @click="logout"

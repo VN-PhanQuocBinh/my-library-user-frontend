@@ -1,9 +1,8 @@
 import apiClient from './api.service'
-import { type RegisterType } from '@/types/auth-schema'
+import type { RegisterType, UpdateProfileType } from '@/types/auth-schema'
 
 export const login = async (payload: { email: string; password: string }) => {
    try {
-      console.log(payload)
       const response = await apiClient.post('/auth/login', payload)
       return response.data
    } catch (error) {
@@ -31,6 +30,15 @@ export const logout = async () => {
 export const getProfile = async () => {
    try {
       const response = await apiClient.get('/auth/profile')
+      return response.data
+   } catch (error) {
+      throw error
+   }
+}
+
+export const updateProfile = async (id: string, payload: Partial<UpdateProfileType>) => {
+   try {
+      const response = await apiClient.patch(`/auth/profile/${id}`, payload)
       return response.data
    } catch (error) {
       throw error
