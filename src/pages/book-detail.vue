@@ -100,7 +100,7 @@ onMounted(() => {
                :numVisible="4"
                containerClass="w-[400px] aspect-[3/5]"
             >
-               <template #item="slotProps" >
+               <template #item="slotProps">
                   <img :src="slotProps.item" class="h-[550px]! object-cover" />
                </template>
                <template #thumbnail="slotProps">
@@ -121,9 +121,15 @@ onMounted(() => {
                   <strong>Ngày xuất bản:</strong>
                   {{ new Date(book.publishedDate).toLocaleDateString() }}
                </p>
+
+               <div class="divider h-[1px] w-full bg-gray-200 my-3"></div>
+
                <p class="mt-2"><strong>Mô tả:</strong></p>
                <p class="mt-1">{{ book.description }}</p>
             </div>
+            
+            <div class="divider h-[1px] w-full bg-gray-200 my-3"></div>
+
             <div class="flex flex-row items-center gap-4">
                <div class="px-3 py-2 rounded-sm bg-blue-50 text-blue-900 font-semibold h-full">
                   {{ book.quantity }} Còn lại
@@ -133,6 +139,7 @@ onMounted(() => {
                >
                   <i class="pi pi-heart" title="Book status"></i>
                </div>
+
                <Button
                   label="Mượn sách"
                   icon="pi pi-book"

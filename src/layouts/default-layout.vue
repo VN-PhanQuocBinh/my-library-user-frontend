@@ -4,11 +4,13 @@ import Footer from '@/components/layouts/footer.vue'
 </script>
 
 <template>
-   <div class="min-h-screen max-h-screen flex flex-col ">
+   <div class="min-h-screen max-h-screen flex flex-col">
       <Header />
 
-      <main :class="['flex-grow mx-auto w-full mt-16 custome-scrollbar overflow-y-scroll']">
-         <slot />
+      <main :class="['flex-grow flex flex-col mx-auto w-full mt-16 custome-scrollbar overflow-y-scroll']">
+         <div class="flex-1 mb-10">
+            <slot />
+         </div>
          <Footer />
       </main>
    </div>

@@ -2,13 +2,16 @@
 import { toRefs } from 'vue'
 import type { Book } from '@/types/book'
 
-const props = defineProps<{ book: Book }>()
+const props = defineProps<{ book: Book; class?: string }>()
 const { _id, coverImage, genre, name, author, quantity } = toRefs(props.book)
 </script>
 
 <template>
    <div
-      class="group cursor-pointer bg-stone-50 p-4 rounded-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col gap-4"
+      :class="[
+         'group cursor-pointer bg-stone-50 p-4 rounded-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col gap-4',
+         props.class,
+      ]"
    >
       <div class="overflow-hidden rounded-lg">
          <img
