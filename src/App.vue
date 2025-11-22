@@ -1,15 +1,11 @@
-<template>
-   <component :is="layout">
-      <router-view />
-   </component>
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import defaultLayout from './layouts/default-layout.vue'
 import { useAuthStore } from './stores/auth'
-import "@/assets/css/custom.css"
+import '@/assets/css/custom.css'
+
+import chatBotDrawer from './components/common/chat-bot-drawer.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -21,3 +17,10 @@ onMounted(() => {
    authStore.verifyAuthentication()
 })
 </script>
+
+<template>
+   <component :is="layout">
+      <router-view />
+   </component>
+   <chatBotDrawer />
+</template>
