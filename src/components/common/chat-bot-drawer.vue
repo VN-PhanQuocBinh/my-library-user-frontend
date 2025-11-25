@@ -2,11 +2,13 @@
 import { ref, toRefs } from 'vue'
 import { useChatbotStore } from '@/stores/chatbot'
 
+import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
 
 const chatbot = useChatbotStore()
 const { isOpen, openChatbot, closeChatbot } = toRefs(chatbot)
 const inputValue = ref('')
+const isSemanticSearch = ref(false)
 
 const handleSubmit = () => {
   if (inputValue.value.trim()) {
@@ -17,19 +19,72 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div class="card flex justify-center">
-    <Drawer v-model:visible="isOpen" header="Drawer" position="right">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-        laboris nisi ut aliquip ex ea commodo consequat.
-      </p>
+  <div class="card flex justify-center max-h-screen">
+    <Drawer
+      v-model:visible="isOpen"
+      header="Chatbot"
+      position="right"
+      :show-close-icon="false"
+      class="w-[500px]!"
+    >
+      <template #header>
+        <div class="w-full flex flex-row justify-between align-items-center">
+          <h2 class="flex items-center text-2xl font-semibold">Chatbot</h2>
+
+          <button
+            class="hover:bg-gray-100 text-gray-700 p-2 size-9 rounded-full"
+            @click="closeChatbot"
+          >
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+      </template>
+      <div class="w-full h-full flex flex-col justify-end">
+        <div class="flex flex-row items-end gap-3">
+          <Button
+            :class="[
+              'shrink-0 size-12! rounded-md transition-colors duration-300',
+              { 'bg-(--my-secondary-color)/20!': isSemanticSearch },
+              { 'border border-gray-200': !isSemanticSearch },
+            ]"
+            icon="pi pi-lightbulb"
+            severity="secondary"
+            :variant="isSemanticSearch ? 'filled' : 'outlined'"
+            @click="isSemanticSearch = !isSemanticSearch"
+            v-tooltip.top="'Toggle Semantic Search'"
+            unstyled
+          />
+
+          <div
+            contenteditable
+            class="flex-1 border border-gray-400 p-3 rounded-lg text-base word-wrap-div outline-(--my-secondary-color) focus:outline-1"
+          ></div>
+
+          <Button
+            class="shrink-0 size-12! bg-(--my-primary-color)! border-none!"
+            icon="pi pi-send"
+            severity="primary"
+            v-tooltip.top="'Send Message'"
+            @click="handleSubmit"
+          />
+        </div>
+      </div>
     </Drawer>
-    <Button icon="pi pi-arrow-right" @click="openChatbot" />
   </div>
 </template>
 
 <style scoped>
+.word-wrap-div {
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  min-height: 48px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
 .chatbot-overlay {
   position: fixed;
   top: 0;
