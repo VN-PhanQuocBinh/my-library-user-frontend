@@ -1,11 +1,20 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { ChatMessage } from '@/types/chatbot'
+import { fetchConversation, sendMessageToConversation } from '@/services/conversation.service'
+import type { CONVERSATION_MESSAGE_TYPE } from '@/types/chatbot'
+import { is } from 'zod/locales'
+
+interface Conversation {
+  conversationId: string
+  messages: ChatMessage[]
+}
 
 export const useChatbotStore = defineStore('chatbot', () => {
   const isOpen = ref(false)
-  const messages = ref<ChatMessage[]>([])
-  const isTyping = ref(false)
+  const currentConversation = ref<Conversation | null>(null)
+  const isSendingMessage = ref(false)
+  const isFetchingMessages = ref(false)
 
   const openChatbot = () => {
     isOpen.value = true
@@ -19,35 +28,64 @@ export const useChatbotStore = defineStore('chatbot', () => {
     isOpen.value = !isOpen.value
   }
 
-  const sendMessage = (content: string) => {
+  const sendMessage = async ({
+    content,
+    type = 'SYSTEM_INFO',
+  }: {
+    content: string
+    type: CONVERSATION_MESSAGE_TYPE
+  }) => {
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      role: 'user',
       content,
-      sender: 'user',
       timestamp: new Date(),
     }
-    messages.value.push(userMessage)
+    currentConversation.value?.messages.push(userMessage)
 
-    isTyping.value = true
-    setTimeout(() => {
-      const botMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        content: `Bot response to: ${content}`,
-        sender: 'bot',
-        timestamp: new Date(),
+    try {
+      isSendingMessage.value = true
+
+      const payload = {
+        conversationId: currentConversation.value?.conversationId || '',
+        message: content,
+        type,
       }
-      messages.value.push(botMessage)
-      isTyping.value = false
-    }, 1000)
+      // Here you would typically call a service to send the message
+      const responseMessage = await sendMessageToConversation(payload)
+      currentConversation.value?.messages.push(responseMessage.data)
+    } catch (error) {
+      console.error('Error sending message:', error)
+    } finally {
+      console.log('Finally sending messages')
+      isSendingMessage.value = false
+    }
   }
+
+  const getConversationMessages = async (conversationId: string) => {
+    try {
+      isFetchingMessages.value = true
+      const data = await fetchConversation(conversationId)
+      currentConversation.value = data.data
+    } catch (error) {
+      console.error('Error fetching conversation messages:', error)
+    } finally {
+      isFetchingMessages.value = false
+    }
+  }
+
+  onMounted(() => {
+    getConversationMessages('690a23f8d231d9df42c1b30e')
+  })
 
   return {
     isOpen,
-    messages,
-    isTyping,
+    isSendingMessage,
+    isFetchingMessages,
+    currentConversation,
     openChatbot,
     closeChatbot,
     toggleChatbot,
     sendMessage,
+    getConversationMessages,
   }
 })

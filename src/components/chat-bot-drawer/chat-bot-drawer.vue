@@ -1,21 +1,43 @@
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { computed, ref, toRefs, watch, type VNodeRef } from 'vue'
 import { useChatbotStore } from '@/stores/chatbot'
 
 import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
+import type { ChatMessage } from '@/types/chatbot'
+import MessageArea from './message-area.vue'
 
 const chatbot = useChatbotStore()
-const { isOpen, openChatbot, closeChatbot } = toRefs(chatbot)
-const inputValue = ref('')
+const { isOpen, isSendingMessage, closeChatbot, currentConversation, sendMessage } = toRefs(chatbot)
+const messages = computed(() => currentConversation.value?.messages ?? [])
+const inputRef = ref<VNodeRef | null>(null)
 const isSemanticSearch = ref(false)
 
-const handleSubmit = () => {
-  if (inputValue.value.trim()) {
-    chatbot.sendMessage(inputValue.value)
-    inputValue.value = ''
-  }
+const handleSubmit = async () => {
+  if (!inputRef.value) return
+
+  const text = (inputRef.value as HTMLElement).innerText.trim()
+  if (text === '') return
+
+  console.log('Submitting message:', {
+    content: text,
+    type: isSemanticSearch.value ? 'BOOK_RECOMMENDATION' : 'SYSTEM_INFO',
+  })
+
+  await sendMessage.value({
+    content: text,
+    type: isSemanticSearch.value ? 'BOOK_RECOMMENDATION' : 'SYSTEM_INFO',
+  })
+
+  inputRef.value.innerText = ''
 }
+
+watch(
+  () => currentConversation.value,
+  (newVal) => {
+    console.log('Messages updated:', newVal)
+  },
+)
 </script>
 
 <template>
@@ -28,7 +50,9 @@ const handleSubmit = () => {
       class="w-[500px]!"
     >
       <template #header>
-        <div class="w-full flex flex-row justify-between align-items-center">
+        <div
+          class="w-full flex flex-row justify-between align-items-center border-b border-gray-200 pb-3"
+        >
           <h2 class="flex items-center text-2xl font-semibold">Chatbot</h2>
 
           <button
@@ -39,8 +63,10 @@ const handleSubmit = () => {
           </button>
         </div>
       </template>
-      <div class="w-full h-full flex flex-col justify-end">
-        <div class="flex flex-row items-end gap-3">
+      <div class="w-full h-full flex flex-col">
+        <MessageArea :messages="messages" class="flex-1" />
+
+        <div class="flex flex-row items-end gap-3 pt-3 border-t border-gray-200">
           <Button
             :class="[
               'shrink-0 size-12! rounded-md transition-colors duration-300',
@@ -51,22 +77,26 @@ const handleSubmit = () => {
             severity="secondary"
             :variant="isSemanticSearch ? 'filled' : 'outlined'"
             @click="isSemanticSearch = !isSemanticSearch"
-            v-tooltip.top="'Toggle Semantic Search'"
+            v-tooltip.top="'Semantic Search'"
             unstyled
           />
 
           <div
-            contenteditable
-            class="flex-1 border border-gray-400 p-3 rounded-lg text-base word-wrap-div outline-(--my-secondary-color) focus:outline-1"
-          ></div>
-
-          <Button
-            class="shrink-0 size-12! bg-(--my-primary-color)! border-none!"
-            icon="pi pi-send"
-            severity="primary"
-            v-tooltip.top="'Send Message'"
-            @click="handleSubmit"
-          />
+            class="relative flex-1 flex flex-row items-end border border-gray-300 px-3 pr-1 py-1 min-h-12 rounded-lg text-base"
+          >
+            <div
+              contenteditable
+              class="self-center flex-1 word-wrap-div outline-none focus:outline-1"
+              ref="inputRef"
+            ></div>
+            <Button
+              class="shrink-0 size-10! bg-(--my-primary-color)! border-none!"
+              :icon="isSendingMessage ? 'pi pi-stop-circle' : 'pi pi-send'"
+              severity="primary"
+              v-tooltip.top="'Send Message'"
+              @click="handleSubmit"
+            />
+          </div>
         </div>
       </div>
     </Drawer>
@@ -80,9 +110,10 @@ const handleSubmit = () => {
   white-space: pre-wrap;
   overflow-wrap: break-word;
   max-width: 100%;
-  min-height: 48px;
+  /* min-height: 48px; */
   max-height: 120px;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .chatbot-overlay {

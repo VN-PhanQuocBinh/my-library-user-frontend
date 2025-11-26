@@ -1,6 +1,11 @@
 export interface ChatMessage {
-   id: string
-   content: string
-   sender: 'user' | 'bot'
-   timestamp: Date
+  id?: string
+  role: 'user' | 'bot'
+  content: string
+  data?: {
+    books?: string[]
+  }
+  timestamp: Date
 }
+
+export type CONVERSATION_MESSAGE_TYPE = 'SYSTEM_INFO' | 'BOOK_RECOMMENDATION'

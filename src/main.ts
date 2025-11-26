@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import ToastService from 'primevue/toastservice'
+import Markdown from 'vue3-markdown-it';
 
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
@@ -27,5 +28,6 @@ app.use(pinia)
 app.use(router)
 app.use(ToastService)
 app.directive('tooltip', Tooltip)
+app.use(Markdown);
 
 app.mount('#app')
