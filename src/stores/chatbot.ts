@@ -3,16 +3,22 @@ import { onMounted, ref } from 'vue'
 import type { ChatMessage } from '@/types/chatbot'
 import { fetchConversation, sendMessageToConversation } from '@/services/conversation.service'
 import type { CONVERSATION_MESSAGE_TYPE } from '@/types/chatbot'
-import { is } from 'zod/locales'
+import { useAuthStore } from './auth'
 
 interface Conversation {
   conversationId: string
+  user: string
   messages: ChatMessage[]
 }
 
 export const useChatbotStore = defineStore('chatbot', () => {
+  const authStore = useAuthStore()
   const isOpen = ref(false)
-  const currentConversation = ref<Conversation | null>(null)
+  const currentConversation = ref<Conversation | null>({
+    conversationId: '',
+    user: authStore.user?._id || '',
+    messages: [],
+  })
   const isSendingMessage = ref(false)
   const isFetchingMessages = ref(false)
 

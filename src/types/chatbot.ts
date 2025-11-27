@@ -1,9 +1,11 @@
+import type { Book } from './book'
+
 export interface ChatMessage {
   id?: string
   role: 'user' | 'bot'
   content: string
   data?: {
-    books?: string[]
+    books?: Book[]
   }
   timestamp: Date
 }

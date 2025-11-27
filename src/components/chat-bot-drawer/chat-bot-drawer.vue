@@ -4,7 +4,6 @@ import { useChatbotStore } from '@/stores/chatbot'
 
 import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
-import type { ChatMessage } from '@/types/chatbot'
 import MessageArea from './message-area.vue'
 
 const chatbot = useChatbotStore()
