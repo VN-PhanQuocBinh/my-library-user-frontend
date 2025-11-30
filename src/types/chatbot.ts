@@ -11,3 +11,9 @@ export interface ChatMessage {
 }
 
 export type CONVERSATION_MESSAGE_TYPE = 'SYSTEM_INFO' | 'BOOK_RECOMMENDATION'
+
+export interface ConversationResponse {
+  _id: string
+  user: string
+  messages?: ChatMessage[]
+}

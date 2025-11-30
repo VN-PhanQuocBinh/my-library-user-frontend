@@ -1,12 +1,20 @@
 import apiClient from './api.service'
-import type { CONVERSATION_MESSAGE_TYPE } from '@/types/chatbot'
+import type { CONVERSATION_MESSAGE_TYPE, ConversationResponse } from '@/types/chatbot'
 
-export async function fetchConversation(conversationId: string) {
+export async function fetchConversation(conversationId: string): Promise<ConversationResponse> {
   try {
     const response = await apiClient.get(`/conversation/${conversationId}`)
-    return response.data
+    return response.data.data
   } catch (error) {
-    console.error('Error fetching conversation messages:', error)
+    throw error
+  }
+}
+
+export async function createConversation(): Promise<ConversationResponse> {
+  try {
+    const response = await apiClient.post(`/conversation/create`)
+    return response.data.data
+  } catch (error) {
     throw error
   }
 }
@@ -28,7 +36,6 @@ export async function sendMessageToConversation({
     })
     return response.data
   } catch (error) {
-    console.error('Error sending message to conversation:', error)
     throw error
   }
 }

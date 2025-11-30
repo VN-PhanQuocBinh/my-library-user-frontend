@@ -28,7 +28,7 @@ const { closeChatbot } = useChatbotStore()
         v-for="(book, index) in data.books"
         :to="`/books/${book._id}`"
         :key="index"
-        class="border border-gray-300 rounded-lg p-2 gap-3 flex flex-row items-center"
+        class="border border-gray-300 rounded-lg p-2 gap-3 flex flex-row items-center max-w-4/5"
         @click="closeChatbot()"
       >
         <img

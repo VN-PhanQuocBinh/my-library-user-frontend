@@ -1,9 +1,21 @@
 import { defineStore } from 'pinia'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import type { ChatMessage } from '@/types/chatbot'
-import { fetchConversation, sendMessageToConversation } from '@/services/conversation.service'
+import {
+  fetchConversation,
+  sendMessageToConversation,
+  createConversation,
+} from '@/services/conversation.service'
 import type { CONVERSATION_MESSAGE_TYPE } from '@/types/chatbot'
 import { useAuthStore } from './auth'
+import type { ConversationResponse } from '@/types/chatbot'
+
+import {
+  storeConversationId,
+  getConversationId,
+  clearStoredConversationId,
+} from '@/services/local-storage.service'
+import { useToast } from 'primevue'
 
 interface Conversation {
   conversationId: string
@@ -12,6 +24,7 @@ interface Conversation {
 }
 
 export const useChatbotStore = defineStore('chatbot', () => {
+  const toast = useToast()
   const authStore = useAuthStore()
   const isOpen = ref(false)
   const currentConversation = ref<Conversation | null>({
@@ -21,6 +34,16 @@ export const useChatbotStore = defineStore('chatbot', () => {
   })
   const isSendingMessage = ref(false)
   const isFetchingMessages = ref(false)
+
+  watch(
+    () => currentConversation.value?.conversationId,
+    (newVal, oldVal) => {
+      if (newVal && newVal !== oldVal) {
+        storeConversationId(newVal)
+      }
+    },
+    { deep: true },
+  )
 
   const openChatbot = () => {
     isOpen.value = true
@@ -60,27 +83,64 @@ export const useChatbotStore = defineStore('chatbot', () => {
       const responseMessage = await sendMessageToConversation(payload)
       currentConversation.value?.messages.push(responseMessage.data)
     } catch (error) {
-      console.error('Error sending message:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to send message. Please try again.',
+        life: 3000,
+      })
     } finally {
-      console.log('Finally sending messages')
       isSendingMessage.value = false
     }
+  }
+
+  const updateConversation = (data: ConversationResponse) => {
+    currentConversation.value = {
+      conversationId: data._id,
+      user: data.user,
+      messages: data.messages || [],
+    }
+
+    if (data._id) storeConversationId(data._id)
   }
 
   const getConversationMessages = async (conversationId: string) => {
     try {
       isFetchingMessages.value = true
       const data = await fetchConversation(conversationId)
-      currentConversation.value = data.data
-    } catch (error) {
-      console.error('Error fetching conversation messages:', error)
+      updateConversation(data)
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.code) {
+        await createNewConversation()
+      }
     } finally {
       isFetchingMessages.value = false
     }
   }
 
-  onMounted(() => {
-    getConversationMessages('690a23f8d231d9df42c1b30e')
+  const createNewConversation = async () => {
+    try {
+      isFetchingMessages.value = true
+      const data = await createConversation()
+      updateConversation(data)
+    } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to create a new conversation. Please try again.',
+        life: 3000,
+      })
+    }
+  }
+
+  onMounted(async () => {
+    const currentConversationId = getConversationId()
+
+    if (!currentConversationId) {
+      createNewConversation()
+    } else {
+      getConversationMessages(currentConversationId)
+    }
   })
 
   return {
