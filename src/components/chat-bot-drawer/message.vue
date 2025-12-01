@@ -39,11 +39,11 @@ const { closeChatbot } = useChatbotStore()
         <div class="flex flex-col items-start">
           <h3
             v-tooltip.top="{ value: book.name, showDelay: 500 }"
-            class="text-lg font-semibold mb-2 text-center 1 line-clamp-1"
+            class="text-lg font-semibold mb-2 1 line-clamp-1"
           >
             {{ book.name }}
           </h3>
-          <p class="text-gray-600 text-center">by {{ book.author }}</p>
+          <p class="text-gray-600">by {{ book.author }}</p>
         </div>
       </RouterLink>
     </div>

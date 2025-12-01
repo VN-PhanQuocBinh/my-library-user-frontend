@@ -39,3 +39,12 @@ export async function sendMessageToConversation({
     throw error
   }
 }
+
+export async function fetchUserConversations(userId: string): Promise<ConversationResponse[]> {
+  try {
+    const response = await apiClient.get(`/conversation/list`)
+    return response.data.data
+  } catch (error) {
+    throw error
+  }
+}

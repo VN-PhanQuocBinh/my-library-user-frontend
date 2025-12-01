@@ -1,16 +1,33 @@
 <script setup lang="ts">
 import { computed, ref, toRefs, watch, type VNodeRef } from 'vue'
 import { useChatbotStore } from '@/stores/chatbot'
+import Popover from 'primevue/popover'
 
 import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
 import MessageArea from './message-area.vue'
 
 const chatbot = useChatbotStore()
-const { isOpen, isSendingMessage, closeChatbot, currentConversation, sendMessage } = toRefs(chatbot)
+const {
+  isOpen,
+  isSendingMessage,
+  closeChatbot,
+  currentConversation,
+  sendMessage,
+  conversationHistory,
+  getConversationMessages,
+} = toRefs(chatbot)
 const messages = computed(() => currentConversation.value?.messages ?? [])
 const inputRef = ref<VNodeRef | null>(null)
 const isSemanticSearch = ref(false)
+const historyMenuRef = ref<InstanceType<typeof Popover> | null>(null)
+
+watch(
+  () => currentConversation.value,
+  (newVal) => {
+    console.log('Messages updated:', newVal)
+  },
+)
 
 const handleSubmit = async () => {
   if (!inputRef.value) return
@@ -31,12 +48,19 @@ const handleSubmit = async () => {
   inputRef.value.innerText = ''
 }
 
-watch(
-  () => currentConversation.value,
-  (newVal) => {
-    console.log('Messages updated:', newVal)
-  },
-)
+const toggleHistoryMenu = (event: MouseEvent) => {
+  if (historyMenuRef.value) {
+    historyMenuRef.value.toggle(event)
+  }
+}
+
+const handleSwitchConversation = async (conversationId: string) => {
+  if (conversationId === currentConversation.value?.conversationId) {
+    return
+  }
+
+  await getConversationMessages.value(conversationId)
+}
 </script>
 
 <template>
@@ -52,7 +76,36 @@ watch(
         <div
           class="w-full flex flex-row justify-between align-items-center border-b border-gray-200 pb-3"
         >
-          <h2 class="flex items-center text-2xl font-semibold">Chatbot</h2>
+          <button
+            class="hover:bg-gray-100 text-gray-700 p-2 size-9 rounded-full"
+            @click="toggleHistoryMenu"
+          >
+            <i class="pi pi-history"></i>
+          </button>
+
+          <Popover ref="historyMenuRef">
+            <div>
+              <h3 class="text-base font-semibold mb-2!">Conversation History</h3>
+              <div class="flex flex-col">
+                <div
+                  v-for="(conversation, index) in conversationHistory"
+                  :key="index"
+                  :class="[
+                    'py-2 px-3 border-b border-gray-200 hover:bg-gray-100 cursor-pointer',
+                    {
+                      'bg-(--my-primary-color)! font-semibold rounded-sm':
+                        conversation._id === currentConversation?.conversationId,
+                    },
+                  ]"
+                  @click="handleSwitchConversation(conversation._id)"
+                >
+                  <span class="text-sm text-gray-700 line-clamp-1">{{ conversation.title }}</span>
+                </div>
+              </div>
+            </div>
+          </Popover>
+
+          <h2 class="flex items-center text-2xl font-semibold">{{ currentConversation?.title }}</h2>
 
           <button
             class="hover:bg-gray-100 text-gray-700 p-2 size-9 rounded-full"

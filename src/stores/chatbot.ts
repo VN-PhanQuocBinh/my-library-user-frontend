@@ -5,6 +5,7 @@ import {
   fetchConversation,
   sendMessageToConversation,
   createConversation,
+  fetchUserConversations,
 } from '@/services/conversation.service'
 import type { CONVERSATION_MESSAGE_TYPE } from '@/types/chatbot'
 import { useAuthStore } from './auth'
@@ -19,6 +20,7 @@ import { useToast } from 'primevue'
 
 interface Conversation {
   conversationId: string
+  title: string
   user: string
   messages: ChatMessage[]
 }
@@ -29,9 +31,13 @@ export const useChatbotStore = defineStore('chatbot', () => {
   const isOpen = ref(false)
   const currentConversation = ref<Conversation | null>({
     conversationId: '',
+    title: '',
     user: authStore.user?._id || '',
     messages: [],
   })
+  const conversationHistory = ref<ConversationResponse[]>([])
+
+  // Loading states
   const isSendingMessage = ref(false)
   const isFetchingMessages = ref(false)
 
@@ -97,6 +103,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
   const updateConversation = (data: ConversationResponse) => {
     currentConversation.value = {
       conversationId: data._id,
+      title: data.title,
       user: data.user,
       messages: data.messages || [],
     }
@@ -133,14 +140,29 @@ export const useChatbotStore = defineStore('chatbot', () => {
     }
   }
 
+  const getConversationHistory = async () => {
+    try {
+      const data = await fetchUserConversations(authStore.user?._id || '')
+      conversationHistory.value = data
+    } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to fetch conversation history. Please try again.',
+        life: 3000,
+      })
+    }
+  }
+
   onMounted(async () => {
     const currentConversationId = getConversationId()
-
     if (!currentConversationId) {
-      createNewConversation()
+      await createNewConversation()
     } else {
-      getConversationMessages(currentConversationId)
+      await getConversationMessages(currentConversationId)
     }
+
+    await getConversationHistory()
   })
 
   return {
@@ -148,6 +170,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
     isSendingMessage,
     isFetchingMessages,
     currentConversation,
+    conversationHistory,
     openChatbot,
     closeChatbot,
     toggleChatbot,

@@ -44,8 +44,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="messageContainer" :class="['w-full overflow-y-auto hide-scrollbar', props.class]">
-    <div class="max-h-full flex flex-col gap-2">
+  <div ref="messageContainer" :class="['w-full overflow-y-auto py-4 hide-scrollbar', props.class]">
+    <div class="flex flex-col gap-2">
       <Message
         v-for="(msg, index) in props.messages"
         :key="index"
