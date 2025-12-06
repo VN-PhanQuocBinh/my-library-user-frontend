@@ -22,23 +22,11 @@ const inputRef = ref<VNodeRef | null>(null)
 const isSemanticSearch = ref(false)
 const historyMenuRef = ref<InstanceType<typeof Popover> | null>(null)
 
-watch(
-  () => currentConversation.value,
-  (newVal) => {
-    console.log('Messages updated:', newVal)
-  },
-)
-
 const handleSubmit = async () => {
   if (!inputRef.value) return
 
   const text = (inputRef.value as HTMLElement).innerText.trim()
   if (text === '') return
-
-  console.log('Submitting message:', {
-    content: text,
-    type: isSemanticSearch.value ? 'BOOK_RECOMMENDATION' : 'SYSTEM_INFO',
-  })
 
   await sendMessage.value({
     content: text,
@@ -85,7 +73,7 @@ const handleSwitchConversation = async (conversationId: string) => {
 
           <Popover ref="historyMenuRef">
             <div>
-              <h3 class="text-base font-semibold mb-2!">Conversation History</h3>
+              <h3 class="text-base font-semibold mb-2!">Lịch sử cuộc trò chuyện</h3>
               <div class="flex flex-col">
                 <div
                   v-for="(conversation, index) in conversationHistory"
@@ -129,7 +117,7 @@ const handleSwitchConversation = async (conversationId: string) => {
             severity="secondary"
             :variant="isSemanticSearch ? 'filled' : 'outlined'"
             @click="isSemanticSearch = !isSemanticSearch"
-            v-tooltip.top="'Semantic Search'"
+            v-tooltip.top="'Tìm kiếm ngữ cảnh'"
             unstyled
           />
 
@@ -145,7 +133,7 @@ const handleSwitchConversation = async (conversationId: string) => {
               class="shrink-0 size-10! bg-(--my-primary-color)! border-none!"
               :icon="isSendingMessage ? 'pi pi-stop-circle' : 'pi pi-send'"
               severity="primary"
-              v-tooltip.top="'Send Message'"
+              v-tooltip.top="'Gửi tin nhắn'"
               @click="handleSubmit"
             />
           </div>

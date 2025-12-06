@@ -10,6 +10,8 @@ type GetBooksParams = {
 }
 
 export const getBooks = async (params?: GetBooksParams) => {
+  console.log('Fetching books with params:', params)
+
   try {
     const response = await apiClient.get('/book/list', { params })
 
@@ -37,9 +39,9 @@ export const borrowBook = async (bookId: string) => {
   }
 }
 
-export const getMyBorrowings = async () => {
+export const getMyBorrowings = async (params?: { page?: number; limit?: number }) => {
   try {
-    const response = await apiClient.get('/book/my-borrowings')
+    const response = await apiClient.get('/book/my-borrowings', { params })
     return response.data
   } catch (error) {
     throw error

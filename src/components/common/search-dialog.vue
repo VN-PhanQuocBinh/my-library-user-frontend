@@ -81,7 +81,7 @@ const closeDialog = () => {
             <InputText
                id="search-input"
                v-model="searchValue"
-               placeholder="Search books..."
+               placeholder="Tìm kiếm sách..."
                unstyled
                class="flex-1 outline-none text-gray-800 px-3 py-2 bg-transparent"
             />
