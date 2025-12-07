@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, toRefs, watch, type VNodeRef } from 'vue'
+import { computed, ref, toRef, toRefs, watch, nextTick, type VNodeRef } from 'vue'
 import { useChatbotStore } from '@/stores/chatbot'
 import Popover from 'primevue/popover'
+import { useToast } from 'primevue'
+import Toast from 'primevue/toast'
+import InputText from 'primevue/inputtext'
 
 import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
@@ -16,24 +19,56 @@ const {
   sendMessage,
   conversationHistory,
   getConversationMessages,
+  createNewConversation,
+  renameConversation,
 } = toRefs(chatbot)
+const toast = useToast()
 const messages = computed(() => currentConversation.value?.messages ?? [])
 const inputRef = ref<VNodeRef | null>(null)
 const isSemanticSearch = ref(false)
 const historyMenuRef = ref<InstanceType<typeof Popover> | null>(null)
+const currentTitle = ref(currentConversation.value?.title)
+const openEditTitle = ref(false)
+
+watch(
+  () => currentConversation.value?.title,
+  (newTitle) => {
+    currentTitle.value = newTitle || 'Cuộc trò chuyện mới'
+  },
+  { immediate: true },
+)
 
 const handleSubmit = async () => {
-  if (!inputRef.value) return
+  try {
+    if (!inputRef.value) {
+      return
+    }
 
-  const text = (inputRef.value as HTMLElement).innerText.trim()
-  if (text === '') return
+    const text = (inputRef.value as HTMLElement).innerText.trim()
+    if (text === '') {
+      toast.add({
+        severity: 'warn',
+        summary: 'Cảnh báo',
+        detail: 'Vui lòng nhập tin nhắn trước khi gửi.',
+        life: 3000,
+      })
+      return
+    }
 
-  await sendMessage.value({
-    content: text,
-    type: isSemanticSearch.value ? 'BOOK_RECOMMENDATION' : 'SYSTEM_INFO',
-  })
+    await sendMessage.value({
+      content: text,
+      type: isSemanticSearch.value ? 'BOOK_RECOMMENDATION' : 'SYSTEM_INFO',
+    })
 
-  inputRef.value.innerText = ''
+    inputRef.value.innerText = ''
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: 'Gửi tin nhắn thất bại. Vui lòng thử lại.',
+      life: 3000,
+    })
+  }
 }
 
 const toggleHistoryMenu = (event: MouseEvent) => {
@@ -47,12 +82,50 @@ const handleSwitchConversation = async (conversationId: string) => {
     return
   }
 
+  historyMenuRef.value?.hide()
   await getConversationMessages.value(conversationId)
+}
+
+const handleCrateNewConversation = async () => {
+  await createNewConversation.value()
+}
+
+const handleEditTitle = () => {
+  openEditTitle.value = true
+  nextTick(() => {
+    const input = document.getElementById('title-edit-input')
+    if (input) {
+      input.focus()
+    }
+  })
+}
+
+const handleRename = async (e: Event) => {
+  openEditTitle.value = false
+  const newTitle = currentTitle.value
+
+  if (newTitle?.trim() === '') {
+    toast.add({
+      severity: 'warn',
+      summary: 'Cảnh báo',
+      detail: 'Tiêu đề không được để trống.',
+      life: 3000,
+    })
+
+    currentTitle.value = currentConversation.value?.title || 'Cuộc trò chuyện mới'
+    return
+  }
+
+  if (newTitle && newTitle !== currentConversation.value?.title) {
+    await renameConversation.value(newTitle)
+  }
 }
 </script>
 
 <template>
   <div class="card flex justify-center max-h-screen">
+    <Toast v-if="isOpen" position="bottom-left" />
+
     <Drawer
       v-model:visible="isOpen"
       header="Chatbot"
@@ -64,12 +137,23 @@ const handleSwitchConversation = async (conversationId: string) => {
         <div
           class="w-full flex flex-row justify-between align-items-center border-b border-gray-200 pb-3"
         >
-          <button
-            class="hover:bg-gray-100 text-gray-700 p-2 size-9 rounded-full"
-            @click="toggleHistoryMenu"
-          >
-            <i class="pi pi-history"></i>
-          </button>
+          <div>
+            <button
+              class="hover:bg-gray-100 text-gray-700 p-2 size-9 rounded-full"
+              @click="toggleHistoryMenu"
+              v-tooltip.bottom="'Lịch sử cuộc trò chuyện'"
+            >
+              <i class="pi pi-history"></i>
+            </button>
+
+            <button
+              class="hover:bg-gray-100 text-gray-700 p-2 size-9 rounded-full"
+              @click="handleCrateNewConversation"
+              v-tooltip.bottom="'Cuộc trò chuyện mới'"
+            >
+              <i class="pi pi-plus"></i>
+            </button>
+          </div>
 
           <Popover ref="historyMenuRef">
             <div>
@@ -93,7 +177,21 @@ const handleSwitchConversation = async (conversationId: string) => {
             </div>
           </Popover>
 
-          <h2 class="flex items-center text-2xl font-semibold">{{ currentConversation?.title }}</h2>
+          <div class="flex items-center">
+            <InputText
+              id="title-edit-input"
+              v-show="openEditTitle"
+              v-model="currentTitle"
+              @blur="handleRename"
+              @keyup.enter="handleRename"
+            />
+            <span
+              v-show="!openEditTitle"
+              class="text-2xl font-semibold"
+              @dblclick="handleEditTitle"
+              >{{ currentConversation?.title }}</span
+            >
+          </div>
 
           <button
             class="hover:bg-gray-100 text-gray-700 p-2 size-9 rounded-full"
@@ -130,10 +228,10 @@ const handleSwitchConversation = async (conversationId: string) => {
               ref="inputRef"
             ></div>
             <Button
-              class="shrink-0 size-10! bg-(--my-primary-color)! border-none!"
+              class="shrink-0 size-10! bg-(--my-primary-color)! hover:bg-(--my-primary-color)/80! text-(--my-secondary-color)! border-none!"
               :icon="isSendingMessage ? 'pi pi-stop-circle' : 'pi pi-send'"
               severity="primary"
-              v-tooltip.top="'Gửi tin nhắn'"
+              v-tooltip.top="{ value: 'Gửi tin nhắn', showDelay: 1000 }"
               @click="handleSubmit"
             />
           </div>

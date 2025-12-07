@@ -53,8 +53,9 @@ const daysToDeadlineByPercent = computed(() => {
   const now = new Date()
   const timeDiff = deadline.value.getTime() - now.getTime()
   const daysToDeadline = timeDiff / (1000 * 3600 * 24)
+  console.log('daysToDeadline', daysToDeadline)
   if (daysToDeadline <= 0) return 100
-  return Math.floor(((_maxBorrowDays - daysToDeadline) / _maxBorrowDays) * 100)
+  return Math.floor( (daysToDeadline / _maxBorrowDays) * 100)
 })
 </script>
 

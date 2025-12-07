@@ -5,11 +5,10 @@ import { useChatbotStore } from '@/stores/chatbot'
 
 export interface MessageProps {
   role?: 'user' | 'bot'
-  content: string
   data?: { books?: Book[] } | null
 }
 
-const { role, content, data } = defineProps<MessageProps>()
+const { role, data } = defineProps<MessageProps>()
 const { closeChatbot } = useChatbotStore()
 </script>
 
@@ -22,6 +21,7 @@ const { closeChatbot } = useChatbotStore()
   >
     <slot></slot>
   </div>
+
   <div>
     <div v-if="data && data.books" class="mt-2 flex flex-col gap-3 sm:grid-cols-2">
       <RouterLink
@@ -49,3 +49,7 @@ const { closeChatbot } = useChatbotStore()
     </div>
   </div>
 </template>
+
+<style scoped>
+
+</style>

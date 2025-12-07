@@ -48,3 +48,17 @@ export async function fetchUserConversations(userId: string): Promise<Conversati
     throw error
   }
 }
+
+export async function renameConversation(
+  conversationId: string,
+  newTitle: string,
+): Promise<ConversationResponse> {
+  try {
+    const response = await apiClient.patch(`/conversation/rename/${conversationId}`, {
+      newTitle,
+    })
+    return response.data.data
+  } catch (error) {
+    throw error
+  }
+}

@@ -4,9 +4,10 @@ import { getBooks } from '@/services/book.service'
 import type { Book } from '@/types/book'
 import { onMounted, ref } from 'vue'
 import AnimatedSection from '@/components/common/animated-section.vue'
-import { motion } from 'motion-v'
+import { useAuthStore } from '@/stores/auth'
 
 const books = ref<Book[]>([])
+const authStore = useAuthStore()
 
 onMounted(async () => {
    const response = await getBooks()
@@ -15,7 +16,7 @@ onMounted(async () => {
 </script>
 
 <template>
-   <section class="py-16 px-11">
+   <section v-if="authStore.isAuthenticated" class="py-16 px-11">
       <div class="mx-auto flex flex-row justify-between items-center mb-8">
          <AnimatedSection :delay="0.2">
             <h2 class="text-2xl font-bold mb-8 text-center text-gray-800">

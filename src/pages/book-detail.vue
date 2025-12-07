@@ -11,8 +11,6 @@ import { getBookById, borrowBook } from '@/services/book.service'
 
 import Galleria from 'primevue/galleria'
 
-import Image from 'primevue/image'
-
 const route = useRoute()
 const book = ref<Book | null>(null)
 const loading = ref(true)
@@ -55,7 +53,7 @@ const handleBorrow = async () => {
     toast.add({
       severity: 'success',
       summary: 'Success',
-      detail: 'Book borrowed successfully',
+      detail: 'Mượn sách thành công!',
       life: 3000,
     })
   } catch (error: any) {
@@ -63,7 +61,7 @@ const handleBorrow = async () => {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: error?.response?.data?.message || 'Failed to borrow book',
+      detail: error?.response?.data?.message || 'Mượn sách thất bại',
       life: 3000,
     })
   } finally {

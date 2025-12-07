@@ -6,6 +6,7 @@ import {
   sendMessageToConversation,
   createConversation,
   fetchUserConversations,
+  renameConversation as renameConversationService,
 } from '@/services/conversation.service'
 import type { CONVERSATION_MESSAGE_TYPE } from '@/types/chatbot'
 import { useAuthStore } from './auth'
@@ -51,6 +52,32 @@ export const useChatbotStore = defineStore('chatbot', () => {
     { deep: true },
   )
 
+  const initializeChatbot = async () => {
+    if (!authStore.isAuthenticated) return
+
+    const currentConversationId = getConversationId()
+    if (!currentConversationId) {
+      await createNewConversation()
+    } else {
+      await getConversationMessages(currentConversationId)
+    }
+
+    await getConversationHistory()
+  }
+
+  watch(
+    () => authStore.isAuthenticated,
+    async () => {
+      if (authStore.isAuthenticated) {
+        await initializeChatbot()
+      } else {
+        clearStoredConversationId()
+        currentConversation.value = null
+        conversationHistory.value = []
+      }
+    },
+  )
+
   const openChatbot = () => {
     isOpen.value = true
   }
@@ -89,12 +116,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
       const responseMessage = await sendMessageToConversation(payload)
       currentConversation.value?.messages.push(responseMessage.data)
     } catch (error) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to send message. Please try again.',
-        life: 3000,
-      })
+      throw error
     } finally {
       isSendingMessage.value = false
     }
@@ -105,7 +127,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
       conversationId: data._id,
       title: data.title,
       user: data.user,
-      messages: data.messages || [],
+      messages: data.messages ? data.messages : currentConversation.value?.messages || [],
     }
 
     if (data._id) storeConversationId(data._id)
@@ -127,9 +149,10 @@ export const useChatbotStore = defineStore('chatbot', () => {
 
   const createNewConversation = async () => {
     try {
-      isFetchingMessages.value = true
       const data = await createConversation()
-      updateConversation(data)
+
+      updateConversation({ ...data, messages: [] })
+      conversationHistory.value.push(data)
     } catch (error) {
       toast.add({
         severity: 'error',
@@ -154,15 +177,35 @@ export const useChatbotStore = defineStore('chatbot', () => {
     }
   }
 
-  onMounted(async () => {
-    const currentConversationId = getConversationId()
-    if (!currentConversationId) {
-      await createNewConversation()
-    } else {
-      await getConversationMessages(currentConversationId)
-    }
+  const renameConversation = async (newTitle: string) => {
+    if (!currentConversation.value) return
+    try {
+      const data = await renameConversationService(
+        currentConversation.value.conversationId,
+        newTitle,
+      )
 
-    await getConversationHistory()
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Đổi tên cuộc trò chuyện thành công.',
+        life: 3000,
+      })
+
+      updateConversation(data)
+      await getConversationHistory()
+    } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Đổi tên cuộc trò chuyện thất bại. Vui lòng thử lại.',
+        life: 3000,
+      })
+    }
+  }
+
+  onMounted(async () => {
+    await initializeChatbot()
   })
 
   return {
@@ -176,5 +219,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
     toggleChatbot,
     sendMessage,
     getConversationMessages,
+    createNewConversation,
+    renameConversation,
   }
 })
