@@ -41,6 +41,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
   // Loading states
   const isSendingMessage = ref(false)
   const isFetchingMessages = ref(false)
+  const isRenameInProgress = ref(false)
 
   watch(
     () => currentConversation.value?.conversationId,
@@ -178,8 +179,10 @@ export const useChatbotStore = defineStore('chatbot', () => {
   }
 
   const renameConversation = async (newTitle: string) => {
-    if (!currentConversation.value) return
+    if (!currentConversation.value || isRenameInProgress.value) return
     try {
+      isRenameInProgress.value = true
+
       const data = await renameConversationService(
         currentConversation.value.conversationId,
         newTitle,
@@ -188,7 +191,7 @@ export const useChatbotStore = defineStore('chatbot', () => {
       toast.add({
         severity: 'success',
         summary: 'Success',
-        detail: 'Đổi tên cuộc trò chuyện thành công.',
+        detail: 'Đổi tên cuộc trò chuyện thành công 2.',
         life: 3000,
       })
 
@@ -201,6 +204,8 @@ export const useChatbotStore = defineStore('chatbot', () => {
         detail: 'Đổi tên cuộc trò chuyện thất bại. Vui lòng thử lại.',
         life: 3000,
       })
+    } finally {
+      isRenameInProgress.value = false
     }
   }
 
