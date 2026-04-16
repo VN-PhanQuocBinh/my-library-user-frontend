@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: my-library-frontend:0.0.1
+    container_name: my-library-frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    
